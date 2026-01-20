@@ -939,11 +939,185 @@ description: 这是我的自定义 skill 描述
 
 ---
 
-## 7. Custom Droids
+## 7. 高级定制功能
+
+Factory Droid 提供多种定制功能，让你可以根据团队和项目需求扩展 AI 的能力。
+
+### 7.1 AGENTS.md - AI 代理的说明书
+
+AGENTS.md 是一个 Markdown 文件，作为 AI 编程代理的「简报包」，告诉 AI 如何构建、测试和运行你的项目。
+
+#### 为什么需要 AGENTS.md
+
+| 文件        | 目的         | 受众      |
+| --------- | ---------- | ------- |
+| README.md | 快速入门、项目描述  | 人类开发者   |
+| AGENTS.md | 构建步骤、测试、约定 | AI 编程代理 |
+
+#### 文件位置与发现
+
+代理按以下顺序查找 AGENTS.md（首个匹配生效）：
+
+1. 当前工作目录的 `./AGENTS.md`
+2. 向上查找到仓库根目录
+3. 子文件夹中的 `AGENTS.md`
+4. 个人覆盖：`~/.factory/AGENTS.md`
+
+#### 常用章节
+
+| 章节            | 内容                  |
+| ------------- | ------------------- |
+| Build & Test  | 编译和运行测试套件的确切命令      |
+| Architecture  | 主要模块和数据流的一段话总结      |
+| Security      | API 密钥、端点、认证流程、敏感数据 |
+| Git Workflows | 分支策略、提交约定、PR 要求     |
+| Conventions   | 文件夹结构、命名模式、代码风格     |
+
+#### 示例
+
+```markdown
+# MyProject
+
+## Core Commands
+
+• Type-check and lint: `pnpm check`
+• Run full test suite: `pnpm test --run --no-color`
+• Start dev servers: `pnpm dev`
+• Build for production: `pnpm build`
+
+## Project Layout
+
+├─ client/ → React + Vite frontend
+├─ server/ → Express backend
+
+## Development Patterns
+
+• TypeScript strict mode, single quotes, trailing commas
+• Tests first when fixing logic bugs
+• Never introduce new runtime deps without PR description
+
+## Git Workflow
+
+1. Branch from `main`: `feature/<slug>` or `bugfix/<slug>`
+2. Run `pnpm check` locally before committing
+3. Keep commits atomic: `feat: …`, `test: …`
+```
+
+#### 最佳实践
+
+- **保持简短** - 目标 ≤150 行，过长会拖慢代理
+- **使用具体命令** - 用反引号包裹命令，代理可直接复制
+- **随代码更新** - 构建步骤变更时同步更新 AGENTS.md
+- **单一信息源** - 链接到 README 或设计文档，而不是复制粘贴
+
+#### 跨代理兼容
+
+AGENTS.md 兼容多种 AI 编程工具：
+- Factory Droid
+- Cursor
+- Aider
+- Gemini CLI
+- Codex
+- Zed
+- 等等...
+
+---
+
+### 7.2 Custom Slash Commands - 自定义斜杠命令
+
+Custom Slash Commands 将可重复的提示或设置步骤转换为 `/快捷命令`。Droid 扫描 `.factory/commands` 文件夹，将每个文件转换为命令。
+
+#### 命令发现与命名
+
+| 作用域 | 位置                     | 说明           |
+| --- | ---------------------- | ------------ |
+| 工作区 | `<项目>/.factory/commands` | 项目特定命令，与团队共享 |
+| 个人  | `~/.factory/commands`    | 私有或跨项目快捷命令   |
+
+- 仅注册 Markdown (`*.md`) 文件和带 shebang (`#!`) 的文件
+- 文件名自动转换为 slug：`Code Review.md` → `/code-review`
+- 使用 `/commands` 打开命令管理 UI
+
+#### Markdown 命令
+
+Markdown 文件渲染为系统通知，作为 Droid 下一轮对话的种子。
+
+```markdown
+---
+description: 请求代码审查
+argument-hint: <分支名>
+---
+
+请审查 `$ARGUMENTS` 并总结任何合并阻塞、测试缺口和风险区域。
+
+- 突出安全或性能问题
+- 建议后续任务和负责人
+- 列出需要关注的文件
+```
+
+| 前置配置          | 用途                       |
+| ------------- | ------------------------ |
+| `description`   | 覆盖斜杠建议中显示的摘要             |
+| `argument-hint` | 添加内联用法提示，如 `/review <分支名>` |
+
+`$ARGUMENTS` 扩展为命令名后输入的所有内容。
+
+#### 可执行命令
+
+可执行文件必须以有效的 shebang 开头：
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Preparing $1"
+npm install
+npm run lint
+echo "Ready to deploy $1"
+```
+
+保存为 `deploy.sh` 后，显示为 `/deploy`。使用 `/deploy feature/login` 传递参数。
+
+#### 示例命令
+
+**每日站会助手：**
+
+```markdown
+---
+description: 为站会总结进度
+---
+
+使用以下格式草拟站会更新：
+
+- **昨天：** 主要成果、合并的 PR、清除的阻塞
+- **今天：** 计划的工作项和目标
+- **风险：** 任何可能延迟的事项、需要的支持、跨团队依赖
+
+保持三个简短的要点部分。
+```
+
+**回归冒烟测试：**
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+target=${1:-"src"}
+
+echo "Running lint + unit tests for $target"
+npm run lint -- "$target"
+npm test -- --runTestsByPath "$target"
+
+echo "Done"
+```
+
+---
+
+### 7.3 Custom Droids - 自定义子代理
 
 Custom Droids 是可复用的子代理（Subagent），每个 Droid 携带自己的系统提示、模型偏好和工具策略，可以处理特定任务如代码审查、安全检查或研究，无需重复输入指令。
 
-### 7.1 什么是 Custom Droids
+#### 什么是 Custom Droids
 
 Custom Droids 以 `.md` 文件形式存放在 `.factory/droids/` 或 `~/.factory/droids/` 目录下。CLI 扫描这些文件夹，验证每个定义，并作为 **Task** 工具的 `subagent_type` 目标公开，让主助手可以在会话中启动专用辅助程序。
 
@@ -966,16 +1140,16 @@ Custom Droids 以 `.md` 文件形式存放在 `.factory/droids/` 或 `~/.factory
 
 **注意**：当名称相同时，项目定义会覆盖个人定义。
 
-### 7.2 为什么使用 Custom Droids
+#### 为什么使用 Custom Droids
 
 - **更快的任务委派** - 将复杂检查清单编码一次，通过单个工具调用复用
 - **更严格的安全性** - 将代理限制为只读、仅编辑或特定工具集
 - **上下文隔离** - 每个子代理使用新的上下文窗口，避免提示膨胀
 - **可重复的流程** - 将团队特定的审查、测试或发布检查编码为可版本控制的代码
 
-### 7.3 创建自定义 Droid
+#### 创建自定义 Droid
 
-#### 方法一：使用 UI 向导
+**方法一：使用 UI 向导**
 
 1. 运行 `/droids` 打开 Droids 菜单
 2. 选择 **Create a new Droid**
@@ -984,7 +1158,7 @@ Custom Droids 以 `.md` 文件形式存放在 `.factory/droids/` 或 `~/.factory
 5. 生成或手动编辑系统提示
 6. 确认标识符、模型和工具
 
-#### 方法二：手动创建文件
+**方法二：手动创建文件**
 
 创建 `~/.factory/droids/code-reviewer.md`：
 
@@ -1029,9 +1203,9 @@ Findings:
 | `web`       | `WebSearch`, `FetchUrl`      | 网络研究和内容    |
 | `mcp`       | 动态填充                     | MCP 工具     |
 
-### 7.4 使用 Custom Droids
+#### 使用 Custom Droids
 
-#### 通过自然语言调用
+**通过自然语言调用：**
 
 ```
 请使用 code-reviewer subagent 审查这个 diff
@@ -1041,11 +1215,11 @@ Findings:
 运行 security-sweeper droid 检查最近编辑的文件
 ```
 
-#### 通过 Task 工具调用
+**通过 Task 工具调用：**
 
 Droid 可以自主调用自定义 Droids，或者你可以直接请求。
 
-### 7.5 从 Claude Code 导入代理
+#### 从 Claude Code 导入代理
 
 如果你已经在 Claude Code 中创建了代理，可以直接导入：
 
@@ -1062,9 +1236,9 @@ Droid 可以自主调用自定义 Droids，或者你可以直接请求。
 - `haiku` → 第一个可用的 Haiku 模型
 - `opus` → 第一个可用的 Opus 模型
 
-### 7.6 示例 Droids
+#### 示例 Droids
 
-#### 安全扫描器
+**安全扫描器：**
 
 ```markdown
 ---
@@ -1088,7 +1262,7 @@ Mitigations:
 - <建议>
 ```
 
-#### 任务协调器
+**任务协调器：**
 
 ```markdown
 ---
@@ -1107,7 +1281,7 @@ tools: ["Read", "Edit", "Execute"]
 保持任务列表状态更新（pending、in_progress、completed）。
 ```
 
-### 7.7 最佳实践
+#### 最佳实践
 
 | 实践      | 说明                                 |
 | ------- | ---------------------------------- |
