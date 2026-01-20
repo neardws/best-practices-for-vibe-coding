@@ -736,11 +736,22 @@ BYOK 允许你：
 
 ## 6. Skills 系统
 
-Skills 是 Factory Droid 的扩展系统，为 AI 提供特定领域的专业知识和工作流。
+Skills 是 Anthropic 于 2025 年 10 月推出的 Claude Agent Skills 系统，Factory Droid 完整支持该系统。Skills 是可组合、可移植的指令集，为 AI 提供特定领域的专业知识和工作流。
 
 ### 6.1 什么是 Skills
 
-Skills 是预定义的指令集和工作流，让 AI 在特定场景下表现更好：
+Skills 是 Anthropic 为 Claude 设计的一套可扩展能力系统。本质上，Skill 是一个包含指令、脚本和资源的文件夹，Claude 可以在执行相关任务时自动加载和使用。
+
+#### 核心特性
+
+| 特性  | 说明                                          |
+| --- | ------------------------------------------- |
+| 可组合 | 多个 Skills 可以堆叠使用，Claude 自动识别和协调             |
+| 可移植 | 一次构建，可在 Claude Code、Factory Droid、API 等多处使用 |
+| 高效  | Claude 仅加载当前任务所需的信息，保持响应速度                  |
+| 强大  | Skills 可包含可执行代码，处理需要高可靠性的任务                 |
+
+#### Skills 的作用
 
 - 📋 提供特定领域的最佳实践
 - 🔄 定义标准化的工作流程
@@ -843,25 +854,55 @@ progress.md    # 会话日志
 
 ### 6.3 Skills 安装与配置
 
-Skills 存放在 `~/.factory/skills/` 目录下：
+#### 安装位置
+
+Skills 可以安装在两个位置：
+
+| 位置                    | 作用域       | 说明           |
+| --------------------- | --------- | ------------ |
+| `~/.factory/skills/`    | 个人 Skills | 跨项目使用，仅对你可见  |
+| `<项目>/.factory/skills/` | 项目 Skills | 与团队共享，跟随项目仓库 |
+
+#### 从 droid-skills 仓库安装
+
+推荐从 [droid-skills](https://github.com/neardws/droid-skills) 仓库安装预配置的 Skills：
 
 ```bash
-# 查看已安装的 skills
-ls ~/.factory/skills/
+# 克隆仓库
+git clone https://github.com/neardws/droid-skills.git
+cd droid-skills
 
-# 每个 skill 是一个目录，包含 SKILL.md 定义文件
-~/.factory/skills/
-├── brainstorming/
-│   └── SKILL.md
-├── planning-with-files/
-│   ├── SKILL.md
-│   ├── scripts/
-│   └── templates/
-├── test-driven-development/
-│   └── SKILL.md
-└── verification-before-completion/
-    └── SKILL.md
+# 安装为个人 Skill（跨项目使用）
+cp -r skills/planning-with-files ~/.factory/skills/
+cp -r skills/md-table-formatter ~/.factory/skills/
+
+# 安装 superpowers 套件（14 个 Skills）
+cp -r skills/superpowers/* ~/.factory/skills/
+
+# 或安装为项目 Skill（与团队共享）
+cp -r skills/planning-with-files <你的项目>/.factory/skills/
 ```
+
+重启 `droid` 以加载新安装的 Skills。
+
+#### 可用 Skills 列表
+
+| Skill               | 描述                |
+| ------------------- | ----------------- |
+| planning-with-files | Manus 风格的文件化任务规划  |
+| md-table-formatter  | 自动格式化 Markdown 表格 |
+| superpowers (14 个)  | 完整开发工作流套件         |
+
+**superpowers 套件包含：**
+- brainstorming - 交互式设计头脑风暴
+- writing-plans - 详细实现计划编写
+- executing-plans - 带检查点的批量执行
+- test-driven-development - RED-GREEN-REFACTOR 循环
+- systematic-debugging - 四阶段根因分析
+- verification-before-completion - 完成前验证
+- requesting-code-review - 代码审查请求
+- receiving-code-review - 响应审查反馈
+- 等等...
 
 #### 创建自定义 Skill
 
@@ -1091,6 +1132,8 @@ npm run test:coverage
 - **Factory Droid**: https://docs.factory.ai/
 - **SWE-Rebench**: https://swe-rebench.com/
 - **MCP 协议**: https://modelcontextprotocol.io/
+- **Anthropic Agent Skills**: https://www.anthropic.com/news/skills
+- **Droid Skills 仓库**: https://github.com/neardws/droid-skills
 
 ### 下一步
 
