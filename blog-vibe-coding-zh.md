@@ -1007,15 +1007,24 @@ Operate autonomously after code is written or modified.
 
 ## 8. MCP (Model Context Protocol)
 
-MCP 是一个标准协议，允许 AI 助手与外部工具和数据源交互。
+MCP（Model Context Protocol）是由 Anthropic 开源的标准协议，用于连接 AI 应用与外部系统。可以把 MCP 想象成 AI 应用的 USB-C 接口——就像 USB-C 为电子设备提供标准化连接方式一样，MCP 为 AI 应用提供了连接外部系统的标准化方式。
 
 ### 8.1 MCP 概念介绍
 
-MCP 允许你：
-- 连接数据库查询数据
-- 访问 API 服务
-- 操作外部工具
-- 扩展 AI 的能力
+#### MCP 能做什么
+
+- 🗓️ AI 助手可以访问你的 Google Calendar 和 Notion，提供更个性化的服务
+- 🎨 Claude Code 可以根据 Figma 设计稿生成完整的 Web 应用
+- 🏢 企业聊天机器人可以连接多个数据库，让用户通过对话分析数据
+- 🖨️ AI 模型可以在 Blender 中创建 3D 设计并用 3D 打印机打印
+
+#### MCP 的核心组件
+
+| 组件        | 说明                    |
+| --------- | --------------------- |
+| Tools     | 可执行的函数，如搜索、计算、API 调用等 |
+| Resources | 数据源，如文件、数据库记录等        |
+| Prompts   | 预定义的提示模板，用于特定工作流      |
 
 ### 8.2 MCP 配置
 
@@ -1046,15 +1055,62 @@ MCP 允许你：
 }
 ```
 
-#### 常用 MCP Servers
+### 8.3 使用 Smithery 安装 MCP Servers
 
-| Server            | 用途             | 安装                                      |
-| ----------------- | -------------- | --------------------------------------- |
-| `server-filesystem` | 文件系统访问         | `@modelcontextprotocol/server-filesystem` |
-| `server-github`     | GitHub 操作      | `@modelcontextprotocol/server-github`     |
-| `server-postgres`   | PostgreSQL 数据库 | `@modelcontextprotocol/server-postgres`   |
-| `server-sqlite`     | SQLite 数据库     | `@modelcontextprotocol/server-sqlite`     |
-| `server-fetch`      | HTTP 请求        | `@modelcontextprotocol/server-fetch`      |
+[Smithery](https://smithery.ai/) 是目前最大的 MCP Server 市场，提供 3700+ 个 MCP 应用。推荐使用 Smithery 来发现和安装 MCP Servers。
+
+#### Smithery 的优势
+
+| 特性   | 说明                           |
+| ---- | ---------------------------- |
+| 认证   | 内置 OAuth，无需自己实现认证流程          |
+| 可观测  | 查看工具使用情况，优化 AI 体验            |
+| 分发   | 发布到 Smithery，可从任何 AI 客户端连接   |
+| 协议网关 | Smithery 保持与 MCP 规范同步，无需自己维护 |
+
+#### 热门 MCP Servers
+
+| Server          | 用途         | 连接数    |
+| --------------- | ---------- | ------ |
+| Gmail           | 邮件管理       | 10.13k |
+| Linkup          | 网络搜索       | 9.53k  |
+| Google Super    | Google 全家桶 | 6.73k  |
+| GitHub          | 代码仓库管理     | 5.98k  |
+| Google Calendar | 日程管理       | 5.63k  |
+
+### 8.4 常用 MCP Servers
+
+#### 官方 Servers
+
+| Server              | 用途             | 安装                                        |
+| ------------------- | -------------- | ----------------------------------------- |
+| `server-filesystem`   | 文件系统访问         | `@modelcontextprotocol/server-filesystem`   |
+| `server-github`       | GitHub 操作      | `@modelcontextprotocol/server-github`       |
+| `server-postgres`     | PostgreSQL 数据库 | `@modelcontextprotocol/server-postgres`     |
+| `server-sqlite`       | SQLite 数据库     | `@modelcontextprotocol/server-sqlite`       |
+| `server-fetch`        | HTTP 请求        | `@modelcontextprotocol/server-fetch`        |
+| `server-puppeteer`    | 浏览器自动化         | `@modelcontextprotocol/server-puppeteer`    |
+| `server-brave-search` | Brave 搜索       | `@modelcontextprotocol/server-brave-search` |
+
+#### 社区 Servers
+
+| Server  | 用途        | 来源       |
+| ------- | --------- | -------- |
+| Notion  | 知识库管理     | Smithery |
+| Slack   | 团队通讯      | Smithery |
+| Linear  | 项目管理      | Smithery |
+| Figma   | 设计协作      | Smithery |
+| MongoDB | NoSQL 数据库 | Smithery |
+
+### 8.5 MCP 相关资源
+
+| 资源                  | 说明                   | 链接                                              |
+| ------------------- | -------------------- | ----------------------------------------------- |
+| MCP 官方文档            | 协议规范和开发指南            | https://modelcontextprotocol.io/                |
+| Smithery            | MCP Server 市场（推荐）    | https://smithery.ai/                            |
+| MCP 官方注册表           | 官方 MCP Server 注册表    | https://registry.modelcontextprotocol.io/       |
+| Awesome MCP Servers | MCP Servers 精选列表     | https://github.com/punkpeye/awesome-mcp-servers |
+| MCP Servers 官方仓库    | Anthropic 官方 Servers | https://github.com/modelcontextprotocol/servers |
 
 ---
 
