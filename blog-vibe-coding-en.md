@@ -520,6 +520,44 @@ Bash mode lets you execute shell commands directly in Droid without AI interpret
 - Run `npm test` or `make build`
 - View file contents or directory structure
 
+### 4.9 Pricing Plans
+
+Factory measures usage through Standard Tokens. Cached tokens are billed at 1/10 (10 cached tokens = 1 Standard Token).
+
+#### Subscription Plans
+
+| Plan  | Standard Tokens / Month   | Price / Month |
+| ----- | ------------------------- | ------------- |
+| **Free**  | BYOK (Bring Your Own Key) | $0            |
+| **Pro**   | 10 million (+10M bonus)   | $20           |
+| **Max**   | 100 million (+100M bonus) | $200          |
+| **Ultra** | 1 billion (+1B bonus)     | $2,000        |
+
+Overage is billed at **$2.70 per million Standard Tokens**.
+
+#### Model Pricing Multipliers
+
+Different models have different multipliers for Standard Token calculation:
+
+| Model             | Model ID                   | Multiplier |
+| ----------------- | -------------------------- | ---------- |
+| Gemini 3 Flash    | `gemini-3-flash-preview`     | 0.2×       |
+| Droid Core        | `glm-4.6`                    | 0.25×      |
+| Claude Haiku 4.5  | `claude-haiku-4-5-20251001`  | 0.4×       |
+| GPT-5.1           | `gpt-5.1`                    | 0.5×       |
+| GPT-5.1-Codex     | `gpt-5.1-codex`              | 0.5×       |
+| GPT-5.1-Codex-Max | `gpt-5.1-codex-max`          | 0.5×       |
+| GPT-5.2           | `gpt-5.2`                    | 0.7×       |
+| Gemini 3 Pro      | `gemini-3-pro-preview`       | 0.8×       |
+| Claude Sonnet 4.5 | `claude-sonnet-4-5-20250929` | 1.2×       |
+| Claude Opus 4.5   | `claude-opus-4-5-20251101`   | 2×         |
+
+#### Recommendations
+
+- **Free Plan**: Ideal for users with existing API keys, no monthly fee
+- **Pro Plan**: Great for individual developers, excellent value
+- **Caching Advantage**: Factory's caching mechanism significantly reduces actual token consumption, typically achieving 4-8x cache hit ratio
+
 ---
 
 ## 5. BYOK - Model Selection Guide

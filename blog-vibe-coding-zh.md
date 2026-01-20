@@ -520,6 +520,44 @@ Bash 模式让你可以直接在 Droid 中执行 Shell 命令，无需 AI 解释
 - 运行 `npm test` 或 `make build`
 - 查看文件内容或目录结构
 
+### 4.9 定价方案
+
+Factory 通过标准 Token（Standard Tokens）计量使用量。缓存 Token 按 1/10 计费（10 个缓存 Token = 1 个标准 Token）。
+
+#### 订阅方案
+
+| 方案    | 标准 Token / 月             | 价格 / 月 |
+| ----- | ------------------------ | ------ |
+| **Free**  | BYOK（自带 API Key）         | $0     |
+| **Pro**   | 1000 万 (+1000 万奖励 Token) | $20    |
+| **Max**   | 1 亿 (+1 亿奖励 Token)       | $200   |
+| **Ultra** | 10 亿 (+10 亿奖励 Token)     | $2,000 |
+
+超额使用按 **$2.70 / 百万标准 Token** 计费。
+
+#### 模型计费乘数
+
+不同模型有不同的乘数来计算标准 Token 使用量：
+
+| 模型                | Model ID                   | 乘数    |
+| ----------------- | -------------------------- | ----- |
+| Gemini 3 Flash    | `gemini-3-flash-preview`     | 0.2×  |
+| Droid Core        | `glm-4.6`                    | 0.25× |
+| Claude Haiku 4.5  | `claude-haiku-4-5-20251001`  | 0.4×  |
+| GPT-5.1           | `gpt-5.1`                    | 0.5×  |
+| GPT-5.1-Codex     | `gpt-5.1-codex`              | 0.5×  |
+| GPT-5.1-Codex-Max | `gpt-5.1-codex-max`          | 0.5×  |
+| GPT-5.2           | `gpt-5.2`                    | 0.7×  |
+| Gemini 3 Pro      | `gemini-3-pro-preview`       | 0.8×  |
+| Claude Sonnet 4.5 | `claude-sonnet-4-5-20250929` | 1.2×  |
+| Claude Opus 4.5   | `claude-opus-4-5-20251101`   | 2×    |
+
+#### 使用建议
+
+- **Free 方案**：适合已有 API Key 的用户，无月费
+- **Pro 方案**：适合个人开发者日常使用，性价比高
+- **缓存优势**：Factory 的缓存机制可显著降低实际 Token 消耗，通常有 4-8 倍的缓存命中率
+
 ---
 
 ## 5. BYOK - 模型选择指南
