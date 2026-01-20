@@ -661,6 +661,30 @@ BYOK 允许你：
 }
 ```
 
+#### 配置参数说明
+
+| 参数              | 必填  | 说明                                                 |
+| --------------- | --- | -------------------------------------------------- |
+| `model`           | 是   | 模型名称，发送给 API 的 model 参数                            |
+| `id`              | 否   | 唯一标识符，格式为 `custom:名称`，用于在 Droid 中选择模型                |
+| `displayName`     | 否   | 在 UI 中显示的名称，便于识别                                   |
+| `baseUrl`         | 是   | API 端点地址，不同服务有不同地址                                 |
+| `apiKey`          | 是   | API 密钥，本地服务可填 `not-needed`                           |
+| `provider`        | 是   | 提供商类型：`openai`、`anthropic`、`generic-chat-completion-api` |
+| `noImageSupport`  | 否   | 是否禁用图片支持，默认 `false`                                  |
+| `maxOutputTokens` | 否   | 最大输出 Token 数，本地模型建议设置                              |
+
+#### 常用 baseUrl 参考
+
+| 服务         | baseUrl                      |
+| ---------- | ---------------------------- |
+| OpenAI     | `https://api.openai.com/v1`    |
+| Anthropic  | `https://api.anthropic.com/v1` |
+| Ollama 本地  | `http://localhost:11434/v1`    |
+| vLLM       | `http://localhost:8000/v1`     |
+| LM Studio  | `http://localhost:1234/v1`     |
+| LiteLLM 代理 | `http://your-proxy:8000/v1`    |
+
 #### 使用本地代理
 
 如果你使用代理服务（如 LiteLLM、OneAPI 等），配置如下：

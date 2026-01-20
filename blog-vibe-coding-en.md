@@ -661,6 +661,30 @@ Configure custom models in `~/.factory/settings.json`:
 }
 ```
 
+#### Configuration Parameters
+
+| Parameter       | Required | Description                                                          |
+| --------------- | -------- | -------------------------------------------------------------------- |
+| `model`           | Yes      | Model name, sent as the model parameter to the API                   |
+| `id`              | No       | Unique identifier, format `custom:name`, used to select model in Droid |
+| `displayName`     | No       | Display name in UI for easy identification                           |
+| `baseUrl`         | Yes      | API endpoint URL, varies by service                                  |
+| `apiKey`          | Yes      | API key, use `not-needed` for local services                           |
+| `provider`        | Yes      | Provider type: `openai`, `anthropic`, `generic-chat-completion-api`        |
+| `noImageSupport`  | No       | Disable image support, defaults to `false`                             |
+| `maxOutputTokens` | No       | Maximum output tokens, recommended for local models                  |
+
+#### Common baseUrl Reference
+
+| Service       | baseUrl                      |
+| ------------- | ---------------------------- |
+| OpenAI        | `https://api.openai.com/v1`    |
+| Anthropic     | `https://api.anthropic.com/v1` |
+| Ollama Local  | `http://localhost:11434/v1`    |
+| vLLM          | `http://localhost:8000/v1`     |
+| LM Studio     | `http://localhost:1234/v1`     |
+| LiteLLM Proxy | `http://your-proxy:8000/v1`    |
+
 #### Using Local Proxy
 
 If you use a proxy service (like LiteLLM, OneAPI, etc.), configure as follows:
