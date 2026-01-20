@@ -676,21 +676,41 @@ Configure custom models in `~/.factory/settings.json`:
 
 #### Common baseUrl Reference
 
-| Service       | baseUrl                                           | Description                |
-| ------------- | ------------------------------------------------- | -------------------------- |
-| OpenAI        | `https://api.openai.com/v1`                         | OpenAI official API        |
-| Anthropic     | `https://api.anthropic.com/v1`                      | Anthropic official API     |
-| Google Gemini | `https://generativelanguage.googleapis.com/v1beta/` | Google AI Studio           |
-| OpenRouter    | `https://openrouter.ai/api/v1`                      | Multi-model aggregator     |
-| Groq          | `https://api.groq.com/openai/v1`                    | Ultra-fast inference (LPU) |
-| Fireworks AI  | `https://api.fireworks.ai/inference/v1`             | High-perf open-source      |
-| DeepInfra     | `https://api.deepinfra.com/v1/openai`               | Cost-effective inference   |
-| Baseten       | `https://inference.baseten.co/v1`                   | Enterprise model serving   |
-| Hugging Face  | `https://router.huggingface.co/v1`                  | HF Inference Router        |
-| Ollama Local  | `http://localhost:11434/v1`                         | Local model deployment     |
-| vLLM          | `http://localhost:8000/v1`                          | High-perf local inference  |
-| LM Studio     | `http://localhost:1234/v1`                          | Desktop local models       |
-| LiteLLM Proxy | `http://your-proxy:8000/v1`                         | API proxy aggregation      |
+**International Services:**
+
+| Service       | baseUrl                                           | Description               |
+| ------------- | ------------------------------------------------- | ------------------------- |
+| OpenAI        | `https://api.openai.com/v1`                         | OpenAI official API       |
+| Anthropic     | `https://api.anthropic.com/v1`                      | Anthropic official API    |
+| Google Gemini | `https://generativelanguage.googleapis.com/v1beta/` | Google AI Studio          |
+| OpenRouter    | `https://openrouter.ai/api/v1`                      | Multi-model aggregator    |
+| Groq          | `https://api.groq.com/openai/v1`                    | Ultra-fast inference(LPU) |
+| Fireworks AI  | `https://api.fireworks.ai/inference/v1`             | High-perf open-source     |
+| DeepInfra     | `https://api.deepinfra.com/v1/openai`               | Cost-effective inference  |
+| Baseten       | `https://inference.baseten.co/v1`                   | Enterprise model serving  |
+| Hugging Face  | `https://router.huggingface.co/v1`                  | HF Inference Router       |
+
+**Chinese Services:**
+
+| Service          | baseUrl                                           | Description              |
+| ---------------- | ------------------------------------------------- | ------------------------ |
+| DeepSeek         | `https://api.deepseek.com/v1`                       | DeepSeek official API    |
+| Zhipu AI (GLM)   | `https://open.bigmodel.cn/api/paas/v4`              | GLM series models        |
+| Alibaba Tongyi   | `https://dashscope.aliyuncs.com/compatible-mode/v1` | Qwen series models       |
+| Moonshot (Kimi)  | `https://api.moonshot.cn/v1`                        | Kimi series models       |
+| Baidu Qianfan    | `https://aip.baidubce.com`                          | ERNIE Bot                |
+| ByteDance Doubao | `https://ark.cn-beijing.volces.com/api/v3`          | Doubao models            |
+| SiliconFlow      | `https://api.siliconflow.cn/v1`                     | Chinese model aggregator |
+
+**Local Deployment:**
+
+| Service       | baseUrl                    | Description               |
+| ------------- | -------------------------- | ------------------------- |
+| Ollama Local  | `http://localhost:11434/v1`  | Local model deployment    |
+| vLLM          | `http://localhost:8000/v1`   | High-perf local inference |
+| LM Studio     | `http://localhost:1234/v1`   | Desktop local models      |
+| LiteLLM Proxy | `http://your-proxy:8000/v1`  | API proxy aggregation     |
+| OneAPI        | `http://your-oneapi:3000/v1` | Chinese proxy aggregator  |
 
 #### Using Local Proxy
 

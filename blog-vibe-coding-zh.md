@@ -676,6 +676,8 @@ BYOK 允许你：
 
 #### 常用 baseUrl 参考
 
+**海外服务：**
+
 | 服务            | baseUrl                                           | 说明               |
 | ------------- | ------------------------------------------------- | ---------------- |
 | OpenAI        | `https://api.openai.com/v1`                         | OpenAI 官方 API    |
@@ -687,10 +689,28 @@ BYOK 允许你：
 | DeepInfra     | `https://api.deepinfra.com/v1/openai`               | 经济型开源模型推理        |
 | Baseten       | `https://inference.baseten.co/v1`                   | 企业级模型部署          |
 | Hugging Face  | `https://router.huggingface.co/v1`                  | HF 推理路由          |
-| Ollama 本地     | `http://localhost:11434/v1`                         | 本地模型部署           |
-| vLLM          | `http://localhost:8000/v1`                          | 高性能本地推理          |
-| LM Studio     | `http://localhost:1234/v1`                          | 桌面端本地模型          |
-| LiteLLM 代理    | `http://your-proxy:8000/v1`                         | API 代理聚合         |
+
+**国内服务：**
+
+| 服务              | baseUrl                                           | 说明              |
+| --------------- | ------------------------------------------------- | --------------- |
+| DeepSeek        | `https://api.deepseek.com/v1`                       | DeepSeek 官方 API |
+| 智谱 AI (GLM)     | `https://open.bigmodel.cn/api/paas/v4`              | GLM 系列模型        |
+| 阿里通义千问          | `https://dashscope.aliyuncs.com/compatible-mode/v1` | Qwen 系列模型       |
+| Moonshot (Kimi) | `https://api.moonshot.cn/v1`                        | Kimi 系列模型       |
+| 百度千帆            | `https://aip.baidubce.com`                          | 文心一言            |
+| 字节豆包            | `https://ark.cn-beijing.volces.com/api/v3`          | 豆包大模型           |
+| SiliconFlow     | `https://api.siliconflow.cn/v1`                     | 国内模型聚合平台        |
+
+**本地部署：**
+
+| 服务         | baseUrl                    | 说明       |
+| ---------- | -------------------------- | -------- |
+| Ollama 本地  | `http://localhost:11434/v1`  | 本地模型部署   |
+| vLLM       | `http://localhost:8000/v1`   | 高性能本地推理  |
+| LM Studio  | `http://localhost:1234/v1`   | 桌面端本地模型  |
+| LiteLLM 代理 | `http://your-proxy:8000/v1`  | API 代理聚合 |
+| OneAPI     | `http://your-oneapi:3000/v1` | 国内常用代理聚合 |
 
 #### 使用本地代理
 
