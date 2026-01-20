@@ -259,16 +259,16 @@ source ~/.zshrc
 
 #### Plugin Function Description
 
-| Plugin | Function | Usage Example |
-|--------|----------|---------------|
-| `git` | Git command aliases | `gst` = `git status`, `gco` = `git checkout` |
-| `sudo` | Quick sudo addition | Double-tap `ESC` to add sudo before current command |
-| `history` | History search | `Ctrl+R` to search command history |
-| `extract` | Universal extraction | `extract file.tar.gz` auto-detects format |
-| `z` | Smart jumping | `z project` jumps to frequently used directory containing "project" |
-| `zsh-autosuggestions` | Command suggestions | Shows gray suggestions while typing, press `→` to accept |
-| `zsh-syntax-highlighting` | Syntax highlighting | Correct commands in green, errors in red |
-| `zsh-completions` | Extra completions | More Tab completion support for commands |
+| Plugin                  | Function             | Usage Example                                                     |
+| ----------------------- | -------------------- | ----------------------------------------------------------------- |
+| `git`                     | Git command aliases  | `gst` = `git status`, `gco` = `git checkout`                              |
+| `sudo`                    | Quick sudo addition  | Double-tap `ESC` to add sudo before current command                 |
+| `history`                 | History search       | `Ctrl+R` to search command history                                  |
+| `extract`                 | Universal extraction | `extract file.tar.gz` auto-detects format                           |
+| `z`                       | Smart jumping        | `z project` jumps to frequently used directory containing "project" |
+| `zsh-autosuggestions`     | Command suggestions  | Shows gray suggestions while typing, press `→` to accept            |
+| `zsh-syntax-highlighting` | Syntax highlighting  | Correct commands in green, errors in red                          |
+| `zsh-completions`         | Extra completions    | More Tab completion support for commands                          |
 
 ![Plugin Effects Demo](<!-- IMAGE: Plugin effects comparison screenshot -->)
 
@@ -296,22 +296,49 @@ Factory Droid is a command-line AI programming tool from Factory AI with the fol
 #### Installation
 
 ```bash
-# Install using npm
-npm install -g @anthropic-ai/droid
-
-# Or install using bun (faster)
-bun install -g @anthropic-ai/droid
+# macOS/Linux
+curl -fsSL https://app.factory.ai/cli | sh
 ```
 
-#### Initial Configuration
+**Linux users:** Ensure `xdg-utils` is installed for full functionality: `sudo apt-get install xdg-utils`
 
-The first run will guide you through configuration:
+#### Getting Started
 
 ```bash
+# Navigate to your project
+cd /path/to/your/project
+
+# Start interactive session
 droid
 ```
 
-Configuration file is located at `~/.factory/settings.json`.
+On first run, you'll be guided to sign in via your browser to connect to Factory.
+
+#### Configuration File
+
+Configuration file is located at `~/.factory/settings.json`. You can modify settings interactively using the `/settings` command.
+
+#### Session Default Settings
+
+Configure default behavior in `settings.json`:
+
+```json
+{
+  "sessionDefaultSettings": {
+    "model": "claude-opus-4-5-20251101",
+    "reasoningEffort": "high",
+    "autonomyMode": "spec",
+    "specModeReasoningEffort": "off"
+  }
+}
+```
+
+| Setting                 | Options                                        | Description         |
+| ----------------------- | ---------------------------------------------- | ------------------- |
+| `model`                   | opus, sonnet, gpt-5.1, gpt-5.2, haiku, etc.    | Default AI model    |
+| `reasoningEffort`         | off, none, low, medium, high                   | Reasoning depth     |
+| `autonomyMode`            | normal, spec, auto-low, auto-medium, auto-high | Autonomy mode       |
+| `specModeReasoningEffort` | off, none, low, medium, high                   | Spec mode reasoning |
 
 ### 4.3 Hooks Configuration
 
@@ -351,6 +378,21 @@ Edit `~/.factory/settings.json`:
           {
             "type": "command",
             "command": "echo '[planning-with-files] File updated. If this completes a phase, update task_plan.md status.'"
+          },
+          {
+            "type": "command",
+            "command": "~/.factory/skills/md-table-formatter/scripts/format-tables.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.factory/skills/planning-with-files/scripts/check-complete.sh 2>/dev/null || true"
           }
         ]
       }
@@ -361,12 +403,122 @@ Edit `~/.factory/settings.json`:
 
 #### Hook Types Description
 
-| Hook Type | Trigger Time | Purpose |
-|-----------|--------------|---------|
+| Hook Type    | Trigger Time        | Purpose                              |
+| ------------ | ------------------- | ------------------------------------ |
 | `SessionStart` | When session starts | Initialization prompts, load context |
-| `PreToolUse` | Before using tools | Check status, read plans |
-| `PostToolUse` | After using tools | Update status, format files |
-| `Stop` | When session ends | Cleanup, summary |
+| `PreToolUse`   | Before using tools  | Check status, read plans             |
+| `PostToolUse`  | After using tools   | Update status, format files          |
+| `Stop`         | When session ends   | Cleanup, summary                     |
+
+### 4.4 Basic Operations
+
+#### Keyboard Shortcuts
+
+| Shortcut    | Function                               |
+| ----------- | -------------------------------------- |
+| `Enter`       | Send message                           |
+| `Shift+Enter` | New line (multi-line input)            |
+| `Shift+Tab`   | Switch mode (Normal/Spec/Auto)         |
+| `!`           | Toggle Bash mode (when input is empty) |
+| `Esc`         | Exit Bash mode / Interrupt operation   |
+| `?`           | View all shortcuts                     |
+| `Ctrl+C`      | Exit Droid                             |
+
+#### Basic Interaction Flow
+
+1. Enter your task description
+2. Droid analyzes the codebase and creates a plan
+3. Review the changes Droid proposes
+4. Accept or reject modifications
+5. Continue iterating until task is complete
+
+### 4.5 Slash Commands
+
+Type `/` commands in Droid to execute specific operations:
+
+| Command   | Description                   |
+| --------- | ----------------------------- |
+| `/settings` | Configure Droid settings      |
+| `/model`    | Switch AI model               |
+| `/review`   | Start AI code review workflow |
+| `/mcp`      | Manage MCP servers            |
+| `/sessions` | List and select past sessions |
+| `/droids`   | Manage custom Droids          |
+| `/skills`   | Manage and invoke Skills      |
+| `/hooks`    | Manage lifecycle Hooks        |
+| `/cost`     | View token usage statistics   |
+| `/new`      | Start new session             |
+| `/help`     | View all available commands   |
+
+### 4.6 Specification Mode
+
+Specification Mode is a core Droid feature that follows the "plan first, execute later" principle.
+
+#### How to Activate
+
+Press **Shift+Tab** to switch to Spec mode.
+
+#### Workflow
+
+1. **Describe the feature** - Describe what you want in 4-6 sentences
+2. **Droid generates spec** - Automatically analyzes codebase, generates detailed implementation plan
+3. **Review and approve** - You can modify or approve the plan
+4. **Implementation** - After approval, Droid executes and shows each change for review
+
+#### Safety Guarantees
+
+- Analysis phase is read-only, no files are modified
+- All changes execute only after approval
+- Complete visibility into the implementation plan
+
+#### Approval Options
+
+| Option                  | Description                                      |
+| ----------------------- | ------------------------------------------------ |
+| Proceed (manual)        | Approve plan, manually confirm each operation    |
+| Proceed + Auto (Low)    | Approve plan, auto-execute file edits and reads  |
+| Proceed + Auto (Medium) | + Auto-execute reversible commands (npm install) |
+| Proceed + Auto (High)   | + Auto-execute high-risk commands (git push)     |
+| Keep iterating          | Continue refining the spec                       |
+
+### 4.7 Auto-Run Mode
+
+Auto-Run mode lets you control Droid's autonomous execution level.
+
+| Level         | Auto-executed Operations             | Examples                        |
+| ------------- | ------------------------------------ | ------------------------------- |
+| Auto (Low)    | File edits, read-only commands       | ls, git status, rg              |
+| Auto (Medium) | + Reversible workspace modifications | npm install, git commit, mv, cp |
+| Auto (High)   | + High-risk commands (not blocked)   | git push, docker, db migrations |
+
+#### How to Switch
+
+- Press **Shift+Tab** to cycle: Normal → Spec → Auto (Low) → Auto (Medium) → Auto (High)
+- Or set the default level in `/settings`
+
+#### Safety Mechanisms
+
+Even in Auto (High) mode, these still require confirmation:
+- Dangerous commands (e.g., `rm -rf /`)
+- Command substitution (`$(...)` or backticks)
+- Operations flagged by CLI security checks
+
+### 4.8 Bash Mode
+
+Bash mode lets you execute shell commands directly in Droid without AI interpretation.
+
+#### How to Use
+
+1. Press `!` when input is empty to enter Bash mode
+2. Prompt changes from `>` to `$`
+3. Type any shell command and press Enter to execute
+4. Press `Esc` to return to AI chat mode
+
+#### Use Cases
+
+- Quick `git status` checks
+- Run `npm test` or `make build`
+- View file contents or directory structure
 
 ---
 
@@ -390,12 +542,12 @@ BYOK allows you to:
 
 #### Key Metrics Explained
 
-| Metric | Meaning | Importance |
-|--------|---------|------------|
-| **Resolved Rate** | Percentage of problems successfully solved | Most important, reflects model capability |
-| **Pass@5** | Success rate within 5 attempts | Reflects model stability |
-| **Cost per Problem** | Average cost per problem | Affects usage costs |
-| **Tokens per Problem** | Tokens consumed per problem | Reflects efficiency |
+| Metric             | Meaning                                    | Importance                                |
+| ------------------ | ------------------------------------------ | ----------------------------------------- |
+| **Resolved Rate**      | Percentage of problems successfully solved | Most important, reflects model capability |
+| **Pass@5**             | Success rate within 5 attempts             | Reflects model stability                  |
+| **Cost per Problem**   | Average cost per problem                   | Affects usage costs                       |
+| **Tokens per Problem** | Tokens consumed per problem                | Reflects efficiency                       |
 
 ### 5.3 Recommended Models (January 2026 Data)
 
@@ -403,35 +555,35 @@ Based on the latest SWE-Rebench data, here are model recommendations for differe
 
 #### Top Performance
 
-| Model | Resolved Rate | Pass@5 | Cost/Problem | Features |
-|-------|---------------|--------|--------------|----------|
-| **Claude Opus 4.5** | 63.3% | 79.2% | $1.22 | Highest performance, best for complex tasks |
-| **GPT-5.2 xhigh** | 61.5% | 70.8% | $1.46 | OpenAI's strongest, excellent reasoning |
-| **Gemini 3 Flash Preview** | 60.0% | 72.9% | $0.29 | Extremely cost-effective |
+| Model                  | Resolved Rate | Pass@5 | Cost/Problem | Features                                    |
+| ---------------------- | ------------- | ------ | ------------ | ------------------------------------------- |
+| **Claude Opus 4.5**        | 63.3%         | 79.2%  | $1.22        | Highest performance, best for complex tasks |
+| **GPT-5.2 xhigh**          | 61.5%         | 70.8%  | $1.46        | OpenAI's strongest, excellent reasoning     |
+| **Gemini 3 Flash Preview** | 60.0%         | 72.9%  | $0.29        | Extremely cost-effective                    |
 
 #### Best Value
 
-| Model | Resolved Rate | Pass@5 | Cost/Problem | Features |
-|-------|---------------|--------|--------------|----------|
-| **Gemini 3 Flash Preview** | 60.0% | 72.9% | $0.29 | 🏆 Best value for money |
-| **GPT-5.2 medium** | 59.4% | 70.8% | $0.86 | Balanced performance and cost |
-| **Claude Sonnet 4.5** | 57.5% | 75.0% | $0.98 | Best for daily tasks |
+| Model                  | Resolved Rate | Pass@5 | Cost/Problem | Features                      |
+| ---------------------- | ------------- | ------ | ------------ | ----------------------------- |
+| **Gemini 3 Flash Preview** | 60.0%         | 72.9%  | $0.29        | 🏆 Best value for money        |
+| **GPT-5.2 medium**         | 59.4%         | 70.8%  | $0.86        | Balanced performance and cost |
+| **Claude Sonnet 4.5**      | 57.5%         | 75.0%  | $0.98        | Best for daily tasks          |
 
 #### Open Source Models
 
-| Model | Resolved Rate | Pass@5 | Cost/Problem | Features |
-|-------|---------------|--------|--------------|----------|
-| **GLM-4.7** | 51.3% | 66.7% | $0.40 | 🏆 Best open source |
-| **DeepSeek-V3.2** | 48.5% | 68.8% | $0.25 | Can be locally deployed |
-| **Kimi K2 Thinking** | 40.5% | 60.4% | $0.48 | Excellent Chinese model |
+| Model            | Resolved Rate | Pass@5 | Cost/Problem | Features                |
+| ---------------- | ------------- | ------ | ------------ | ----------------------- |
+| **GLM-4.7**          | 51.3%         | 66.7%  | $0.40        | 🏆 Best open source      |
+| **DeepSeek-V3.2**    | 48.5%         | 68.8%  | $0.25        | Can be locally deployed |
+| **Kimi K2 Thinking** | 40.5%         | 60.4%  | $0.48        | Excellent Chinese model |
 
 #### Budget Friendly
 
-| Model | Resolved Rate | Pass@5 | Cost/Problem | Features |
-|-------|---------------|--------|--------------|----------|
-| **Grok Code Fast 1** | 35.9% | 54.2% | $0.08 | Cheapest |
-| **Devstral-2-123B** | 36.6% | 59.6% | $0.09 | Open source, self-hostable |
-| **MiniMax M2.1** | 37.3% | 58.3% | $0.10 | Cache-friendly |
+| Model            | Resolved Rate | Pass@5 | Cost/Problem | Features                   |
+| ---------------- | ------------- | ------ | ------------ | -------------------------- |
+| **Grok Code Fast 1** | 35.9%         | 54.2%  | $0.08        | Cheapest                   |
+| **Devstral-2-123B**  | 36.6%         | 59.6%  | $0.09        | Open source, self-hostable |
+| **MiniMax M2.1**     | 37.3%         | 58.3%  | $0.10        | Cache-friendly             |
 
 ### 5.4 Custom Model Configuration
 
@@ -544,9 +696,9 @@ Implement complete user authentication system including registration, login, log
 Working on Phase 2
 
 ## Issues Encountered
-| Issue | Attempt | Solution |
-|-------|---------|----------|
-| JWT expiry handling | 1 | Added refresh token |
+| Issue               | Attempt | Solution            |
+| ------------------- | ------- | ------------------- |
+| JWT expiry handling | 1       | Added refresh token |
 ```
 
 #### brainstorming - Creative Brainstorming
@@ -755,13 +907,13 @@ Configuration file is located at `~/.factory/mcp.json`:
 
 #### Common MCP Servers
 
-| Server | Purpose | Package |
-|--------|---------|---------|
-| `server-filesystem` | File system access | `@modelcontextprotocol/server-filesystem` |
-| `server-github` | GitHub operations | `@modelcontextprotocol/server-github` |
-| `server-postgres` | PostgreSQL database | `@modelcontextprotocol/server-postgres` |
-| `server-sqlite` | SQLite database | `@modelcontextprotocol/server-sqlite` |
-| `server-fetch` | HTTP requests | `@modelcontextprotocol/server-fetch` |
+| Server            | Purpose             | Package                                 |
+| ----------------- | ------------------- | --------------------------------------- |
+| `server-filesystem` | File system access  | `@modelcontextprotocol/server-filesystem` |
+| `server-github`     | GitHub operations   | `@modelcontextprotocol/server-github`     |
+| `server-postgres`   | PostgreSQL database | `@modelcontextprotocol/server-postgres`   |
+| `server-sqlite`     | SQLite database     | `@modelcontextprotocol/server-sqlite`     |
+| `server-fetch`      | HTTP requests       | `@modelcontextprotocol/server-fetch`      |
 
 ---
 
