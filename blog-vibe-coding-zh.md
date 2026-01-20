@@ -926,6 +926,17 @@ description: 这是我的自定义 skill 描述
 具体的工作流程...
 ```
 
+#### Skills 相关资源
+
+| 资源                      | 说明                    | 链接                                                    |
+| ----------------------- | --------------------- | ----------------------------------------------------- |
+| Skills Manager Client   | Skills 管理客户端工具        | https://github.com/buzhangsan/skills-manager-client   |
+| Superpowers             | 完整开发工作流 Skills 套件     | https://github.com/obra/superpowers                   |
+| Planning With Files     | Manus 风格文件化规划 Skill   | https://github.com/OthmanAdi/planning-with-files      |
+| Agent Skills            | 社区 Skills 集合          | https://github.com/agentskills/agentskills            |
+| Awesome Claude Skills   | Claude Skills 精选列表    | https://github.com/travisvn/awesome-claude-skills     |
+| Claude Plugins Official | Anthropic 官方插件/Skills | https://github.com/anthropics/claude-plugins-official |
+
 ---
 
 ## 7. Custom Droids
