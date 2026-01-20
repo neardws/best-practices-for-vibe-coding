@@ -1404,63 +1404,316 @@ MCP（Model Context Protocol）是由 Anthropic 开源的标准协议，用于�
 
 ## 9. 工作流示例
 
-让我们通过一个完整的例子来展示 Vibe Coding 工作流。
+让我们通过一个完整的例子来展示 Vibe Coding 工作流——实现一个 CartPole（倒立摆）强化学习游戏，包含完整的前后端。
 
-### 场景：创建一个 REST API 端点
+### 场景：CartPole 强化学习游戏
 
-#### 步骤 1：打开终端
+CartPole 是强化学习的经典问题：通过左右移动小车，让杆子保持直立。我们将用 Vibe Coding 完成：
+
+- **后端**：Python + FastAPI，实现环境模拟和 DQN 算法
+- **前端**：React + Canvas，实时可视化训练过程
+
+![CartPole 游戏示意](<!-- IMAGE: CartPole 游戏界面截图 -->)
+
+### 步骤 1：创建项目并启动 Droid
 
 ```bash
-# 在 Warp 或 Kitty 中打开项目目录
-cd ~/projects/my-api
-```
+# 创建项目目录
+mkdir cartpole-rl && cd cartpole-rl
 
-#### 步骤 2：启动 Factory Droid
-
-```bash
+# 启动 Droid，进入 Spec Mode
 droid
+# 按 Shift+Tab 切换到 Spec 模式
 ```
 
-![启动 Droid](<!-- IMAGE: Droid 启动界面截图 -->)
+### 步骤 2：描述需求（Spec Mode）
 
-#### 步骤 3：描述任务
+在 Spec 模式下输入详细需求：
 
 ```
-我需要创建一个用户注册的 REST API 端点：
-- POST /api/users/register
-- 接收 email 和 password
-- 验证输入
-- 密码加密存储
-- 返回 JWT token
+我想创建一个 CartPole 强化学习可视化项目：
 
-请使用 TDD 方式开发。
+## 后端（Python + FastAPI）
+1. CartPole 环境模拟
+   - 物理参数：小车质量、杆子长度、重力等
+   - 状态：[位置, 速度, 角度, 角速度]
+   - 动作：向左(0) 或 向右(1)
+   
+2. DQN 算法实现
+   - 神经网络：2层全连接，输入4维状态，输出2个动作Q值
+   - 经验回放缓冲区
+   - 目标网络软更新
+   
+3. API 端点
+   - POST /train/start - 开始训练
+   - POST /train/stop - 停止训练  
+   - GET /train/status - 获取训练状态
+   - WebSocket /ws/game - 实时推送游戏状态
+
+## 前端（React + Vite）
+1. Canvas 可视化
+   - 绘制小车、杆子、轨道
+   - 实时更新位置和角度
+   
+2. 控制面板
+   - 开始/暂停/重置按钮
+   - 训练回合数显示
+   - 当前奖励显示
+   
+3. 训练曲线图
+   - 显示每回合的总奖励
+   - 使用 Chart.js 或 Recharts
+
+请先给我一个实现计划。
 ```
 
-#### 步骤 4：AI 执行
+### 步骤 3：审查并批准计划
 
-Droid 会：
-1. 创建 `task_plan.md` 规划任务
-2. 先编写测试代码
-3. 运行测试确认失败（RED）
-4. 编写实现代码
-5. 运行测试确认通过（GREEN）
-6. 重构代码（REFACTOR）
-7. 运行验证确认完成
+Droid 会生成详细的实现计划，包括：
 
-#### 步骤 5：审查结果
+```markdown
+# 实现计划
+
+## Phase 1: 项目结构搭建
+- 创建 backend/ 和 frontend/ 目录
+- 初始化 Python 虚拟环境和依赖
+- 初始化 React + Vite 项目
+
+## Phase 2: 后端核心实现
+- CartPole 环境类
+- DQN 智能体类
+- 训练循环逻辑
+
+## Phase 3: API 层
+- FastAPI 路由
+- WebSocket 实时通信
+- CORS 配置
+
+## Phase 4: 前端实现
+- Canvas 渲染组件
+- WebSocket 连接
+- 控制面板 UI
+
+## Phase 5: 集成测试
+- 端到端测试
+- 性能优化
+```
+
+选择 **Proceed + Auto (Medium)** 让 Droid 自动执行。
+
+### 步骤 4：观察 AI 编码
+
+Droid 会自动创建文件，你可以实时观察：
+
+**后端核心代码示例（AI 生成）：**
+
+```python
+# backend/env/cartpole.py
+import numpy as np
+
+class CartPoleEnv:
+    def __init__(self):
+        self.gravity = 9.8
+        self.cart_mass = 1.0
+        self.pole_mass = 0.1
+        self.pole_length = 0.5
+        self.force_mag = 10.0
+        self.tau = 0.02  # 时间步长
+        
+        self.state = None
+        self.reset()
+    
+    def reset(self):
+        # 随机初始化状态 [x, x_dot, theta, theta_dot]
+        self.state = np.random.uniform(-0.05, 0.05, size=(4,))
+        return self.state.copy()
+    
+    def step(self, action):
+        x, x_dot, theta, theta_dot = self.state
+        force = self.force_mag if action == 1 else -self.force_mag
+        
+        # 物理模拟（简化欧拉法）
+        cos_theta, sin_theta = np.cos(theta), np.sin(theta)
+        total_mass = self.cart_mass + self.pole_mass
+        
+        temp = (force + self.pole_mass * self.pole_length * theta_dot**2 * sin_theta) / total_mass
+        theta_acc = (self.gravity * sin_theta - cos_theta * temp) / (
+            self.pole_length * (4/3 - self.pole_mass * cos_theta**2 / total_mass)
+        )
+        x_acc = temp - self.pole_mass * self.pole_length * theta_acc * cos_theta / total_mass
+        
+        # 更新状态
+        x += self.tau * x_dot
+        x_dot += self.tau * x_acc
+        theta += self.tau * theta_dot
+        theta_dot += self.tau * theta_acc
+        
+        self.state = np.array([x, x_dot, theta, theta_dot])
+        
+        # 判断是否结束
+        done = abs(x) > 2.4 or abs(theta) > 0.21  # 约12度
+        reward = 1.0 if not done else 0.0
+        
+        return self.state.copy(), reward, done
+```
+
+**前端可视化示例（AI 生成）：**
+
+```tsx
+// frontend/src/components/CartPoleCanvas.tsx
+import { useEffect, useRef } from 'react';
+
+interface GameState {
+  x: number;
+  theta: number;
+  reward: number;
+  episode: number;
+}
+
+export function CartPoleCanvas({ state }: { state: GameState }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d')!;
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // 清空画布
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, width, height);
+    
+    // 坐标转换
+    const scale = 100;
+    const cartX = width / 2 + state.x * scale;
+    const cartY = height - 50;
+    const cartWidth = 60;
+    const cartHeight = 30;
+    const poleLength = 100;
+    
+    // 绘制轨道
+    ctx.strokeStyle = '#4a4a6a';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, cartY + cartHeight / 2);
+    ctx.lineTo(width, cartY + cartHeight / 2);
+    ctx.stroke();
+    
+    // 绘制小车
+    ctx.fillStyle = '#00d4ff';
+    ctx.fillRect(cartX - cartWidth / 2, cartY - cartHeight / 2, cartWidth, cartHeight);
+    
+    // 绘制杆子
+    const poleEndX = cartX + Math.sin(state.theta) * poleLength;
+    const poleEndY = cartY - Math.cos(state.theta) * poleLength;
+    
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 8;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cartX, cartY - cartHeight / 2);
+    ctx.lineTo(poleEndX, poleEndY);
+    ctx.stroke();
+    
+    // 绘制信息
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '16px monospace';
+    ctx.fillText(`Episode: ${state.episode}`, 10, 25);
+    ctx.fillText(`Reward: ${state.reward.toFixed(1)}`, 10, 50);
+    
+  }, [state]);
+  
+  return <canvas ref={canvasRef} width={600} height={400} />;
+}
+```
+
+### 步骤 5：迭代优化
+
+训练效果不理想？继续与 Droid 对话：
+
+```
+训练了 100 回合但杆子还是很快倒下，请帮我：
+1. 检查奖励函数设计是否合理
+2. 调整神经网络结构或超参数
+3. 添加奖励曲线的移动平均线便于观察趋势
+```
+
+Droid 会分析问题并提出改进：
+
+```
+分析发现几个问题：
+
+1. **奖励稀疏** - 只在存活时给 +1，改为：
+   - 基础存活奖励 +1
+   - 角度接近垂直额外奖励
+   - 位置接近中心额外奖励
+
+2. **学习率过高** - 从 0.001 降到 0.0005
+
+3. **探索不足** - epsilon 衰减太快，调整为 500 回合衰减
+
+正在应用修改...
+```
+
+### 步骤 6：运行和验证
 
 ```bash
-# 查看生成的文件
-git status
+# 终端 1：启动后端
+cd backend
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
 
-# 运行测试
-npm test
-
-# 查看覆盖率
-npm run test:coverage
+# 终端 2：启动前端
+cd frontend
+npm install && npm run dev
 ```
 
-![工作流完成](<!-- IMAGE: 完整工作流执行结果截图 -->)
+打开浏览器访问 `http://localhost:5173`，观看 AI 学习保持杆子直立！
+
+![训练过程](<!-- IMAGE: 训练过程截图，显示奖励曲线上升 -->)
+
+### 完整项目结构
+
+```
+cartpole-rl/
+├── backend/
+│   ├── main.py              # FastAPI 入口
+│   ├── requirements.txt
+│   ├── env/
+│   │   └── cartpole.py      # 环境模拟
+│   └── agent/
+│       ├── dqn.py           # DQN 算法
+│       └── replay_buffer.py # 经验回放
+├── frontend/
+│   ├── package.json
+│   ├── src/
+│   │   ├── App.tsx
+│   │   ├── components/
+│   │   │   ├── CartPoleCanvas.tsx
+│   │   │   ├── ControlPanel.tsx
+│   │   │   └── RewardChart.tsx
+│   │   └── hooks/
+│   │       └── useWebSocket.ts
+│   └── vite.config.ts
+└── README.md
+```
+
+### 关键收获
+
+通过这个示例，你体验了 Vibe Coding 的完整流程：
+
+| 阶段   | 传统开发   | Vibe Coding    |
+| ---- | ------ | -------------- |
+| 需求分析 | 手动编写文档 | 自然语言描述，AI 生成计划 |
+| 架构设计 | 手动画图设计 | Spec Mode 迭代确认 |
+| 编码实现 | 逐行编写代码 | AI 生成，人工审查     |
+| 调试优化 | 手动分析问题 | 描述问题，AI 定位修复   |
+| 测试验证 | 手动编写测试 | AI 生成测试用例      |
+
+**从零到可运行的全栈 RL 项目，整个过程可能只需要 30 分钟！**
 
 ---
 
