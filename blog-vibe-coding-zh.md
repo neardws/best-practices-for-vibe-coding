@@ -676,14 +676,21 @@ BYOK 允许你：
 
 #### 常用 baseUrl 参考
 
-| 服务         | baseUrl                      |
-| ---------- | ---------------------------- |
-| OpenAI     | `https://api.openai.com/v1`    |
-| Anthropic  | `https://api.anthropic.com/v1` |
-| Ollama 本地  | `http://localhost:11434/v1`    |
-| vLLM       | `http://localhost:8000/v1`     |
-| LM Studio  | `http://localhost:1234/v1`     |
-| LiteLLM 代理 | `http://your-proxy:8000/v1`    |
+| 服务            | baseUrl                                           | 说明               |
+| ------------- | ------------------------------------------------- | ---------------- |
+| OpenAI        | `https://api.openai.com/v1`                         | OpenAI 官方 API    |
+| Anthropic     | `https://api.anthropic.com/v1`                      | Anthropic 官方 API |
+| Google Gemini | `https://generativelanguage.googleapis.com/v1beta/` | Google AI Studio |
+| OpenRouter    | `https://openrouter.ai/api/v1`                      | 多模型聚合平台          |
+| Groq          | `https://api.groq.com/openai/v1`                    | 超快推理（LPU）        |
+| Fireworks AI  | `https://api.fireworks.ai/inference/v1`             | 高性能开源模型推理        |
+| DeepInfra     | `https://api.deepinfra.com/v1/openai`               | 经济型开源模型推理        |
+| Baseten       | `https://inference.baseten.co/v1`                   | 企业级模型部署          |
+| Hugging Face  | `https://router.huggingface.co/v1`                  | HF 推理路由          |
+| Ollama 本地     | `http://localhost:11434/v1`                         | 本地模型部署           |
+| vLLM          | `http://localhost:8000/v1`                          | 高性能本地推理          |
+| LM Studio     | `http://localhost:1234/v1`                          | 桌面端本地模型          |
+| LiteLLM 代理    | `http://your-proxy:8000/v1`                         | API 代理聚合         |
 
 #### 使用本地代理
 

@@ -676,14 +676,21 @@ Configure custom models in `~/.factory/settings.json`:
 
 #### Common baseUrl Reference
 
-| Service       | baseUrl                      |
-| ------------- | ---------------------------- |
-| OpenAI        | `https://api.openai.com/v1`    |
-| Anthropic     | `https://api.anthropic.com/v1` |
-| Ollama Local  | `http://localhost:11434/v1`    |
-| vLLM          | `http://localhost:8000/v1`     |
-| LM Studio     | `http://localhost:1234/v1`     |
-| LiteLLM Proxy | `http://your-proxy:8000/v1`    |
+| Service       | baseUrl                                           | Description                |
+| ------------- | ------------------------------------------------- | -------------------------- |
+| OpenAI        | `https://api.openai.com/v1`                         | OpenAI official API        |
+| Anthropic     | `https://api.anthropic.com/v1`                      | Anthropic official API     |
+| Google Gemini | `https://generativelanguage.googleapis.com/v1beta/` | Google AI Studio           |
+| OpenRouter    | `https://openrouter.ai/api/v1`                      | Multi-model aggregator     |
+| Groq          | `https://api.groq.com/openai/v1`                    | Ultra-fast inference (LPU) |
+| Fireworks AI  | `https://api.fireworks.ai/inference/v1`             | High-perf open-source      |
+| DeepInfra     | `https://api.deepinfra.com/v1/openai`               | Cost-effective inference   |
+| Baseten       | `https://inference.baseten.co/v1`                   | Enterprise model serving   |
+| Hugging Face  | `https://router.huggingface.co/v1`                  | HF Inference Router        |
+| Ollama Local  | `http://localhost:11434/v1`                         | Local model deployment     |
+| vLLM          | `http://localhost:8000/v1`                          | High-perf local inference  |
+| LM Studio     | `http://localhost:1234/v1`                          | Desktop local models       |
+| LiteLLM Proxy | `http://your-proxy:8000/v1`                         | API proxy aggregation      |
 
 #### Using Local Proxy
 
