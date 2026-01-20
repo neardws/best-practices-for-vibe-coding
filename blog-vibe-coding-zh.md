@@ -941,67 +941,181 @@ description: 这是我的自定义 skill 描述
 
 ## 7. Custom Droids
 
-Custom Droids 是专门化的 AI 代理，针对特定任务进行优化。
+Custom Droids 是可复用的子代理（Subagent），每个 Droid 携带自己的系统提示、模型偏好和工具策略，可以处理特定任务如代码审查、安全检查或研究，无需重复输入指令。
 
 ### 7.1 什么是 Custom Droids
 
-Custom Droids 与 Skills 的区别：
-- **Skills**：提供给主 AI 的知识和指导
-- **Custom Droids**：独立的专门化 AI 代理
+Custom Droids 以 `.md` 文件形式存放在 `.factory/droids/` 或 `~/.factory/droids/` 目录下。CLI 扫描这些文件夹，验证每个定义，并作为 **Task** 工具的 `subagent_type` 目标公开，让主助手可以在会话中启动专用辅助程序。
 
-Custom Droids 可以：
-- 自主处理特定类型的任务
-- 拥有专门的系统提示
-- 使用不同的模型配置
+#### Custom Droids 与 Skills 的区别
 
-### 7.2 创建自定义 Droid
+| 特性   | Skills     | Custom Droids |
+| ---- | ---------- | ------------- |
+| 本质   | 知识和指导      | 独立的专门化 AI 代理  |
+| 运行方式 | 增强主 AI 的能力 | 作为子代理独立运行     |
+| 上下文  | 共享主会话上下文   | 独立的上下文窗口      |
+| 工具访问 | 使用主 AI 的工具 | 可限制特定工具集      |
+| 模型选择 | 使用主 AI 的模型 | 可指定不同模型       |
 
-Droids 存放在 `~/.factory/droids/` 目录：
+#### 存储位置
 
-#### 示例：code-simplifier Droid
+| 位置                    | 作用域       | 说明           |
+| --------------------- | --------- | ------------ |
+| `<项目>/.factory/droids/` | 项目 Droids | 与团队共享，可版本控制  |
+| `~/.factory/droids/`    | 个人 Droids | 跨工作区使用，仅对你可见 |
 
-创建 `~/.factory/droids/code-simplifier.md`：
+**注意**：当名称相同时，项目定义会覆盖个人定义。
+
+### 7.2 为什么使用 Custom Droids
+
+- **更快的任务委派** - 将复杂检查清单编码一次，通过单个工具调用复用
+- **更严格的安全性** - 将代理限制为只读、仅编辑或特定工具集
+- **上下文隔离** - 每个子代理使用新的上下文窗口，避免提示膨胀
+- **可重复的流程** - 将团队特定的审查、测试或发布检查编码为可版本控制的代码
+
+### 7.3 创建自定义 Droid
+
+#### 方法一：使用 UI 向导
+
+1. 运行 `/droids` 打开 Droids 菜单
+2. 选择 **Create a new Droid**
+3. 选择存储位置（项目或个人）
+4. 描述 Droid 应该做什么
+5. 生成或手动编辑系统提示
+6. 确认标识符、模型和工具
+
+#### 方法二：手动创建文件
+
+创建 `~/.factory/droids/code-reviewer.md`：
 
 ```markdown
 ---
-name: code-simplifier
-description: "Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality. Use after writing or modifying code."
+name: code-reviewer
+description: 检查 diff 的正确性风险的专注审查者
+model: inherit
+tools: ["Read", "LS", "Grep", "Glob"]
 ---
 
-# Code Simplifier
+你是团队的高级审查者。检查父代理分享的 diff：
 
-You are an expert code simplification specialist focused on enhancing code clarity, consistency, and maintainability while preserving exact functionality.
+- 标记正确性、安全性和迁移风险
+- 如果需要更改，列出有针对性的后续任务
+- 确认合并前需要的测试或手动验证
 
-## 1. Preserve Functionality
-Never change what the code does - only how it does it.
-
-## 2. Apply Project Standards
-Follow the established coding standards from project configuration.
-
-## 3. Enhance Clarity
-Simplify code structure by:
-- Reducing unnecessary complexity and nesting
-- Eliminating redundant code
-- Improving readability through clear naming
-- Avoiding nested ternary operators
-
-## 4. Maintain Balance
-Avoid over-simplification that could:
-- Reduce code clarity
-- Create overly clever solutions
-- Make the code harder to debug
-
-## Usage
-Operate autonomously after code is written or modified.
+回复格式：
+Summary: <一行总结>
+Findings:
+- <要点>
+- <要点>
 ```
 
-#### 使用 Custom Droid
+#### 配置字段说明
 
-在 Factory Droid 中，可以通过 Task 工具调用自定义 Droid：
+| 字段              | 说明                                                    |
+| --------------- | ----------------------------------------------------- |
+| `name`            | 必填。小写字母、数字、`-`、`_`。决定 `subagent_type` 值和文件名                 |
+| `description`     | 可选。在 UI 列表中显示，≤500 字符                                 |
+| `model`           | `inherit`（使用父会话模型）或指定模型 ID，如 `claude-sonnet-4-5-20250929` |
+| `reasoningEffort` | 可选。设置推理深度：`low`、`medium`、`high`                             |
+| `tools`           | 省略表示所有工具；使用类别字符串或工具 ID 数组                             |
+
+#### 工具类别
+
+| 类别        | 工具 ID                    | 用途         |
+| --------- | ------------------------ | ---------- |
+| `read-only` | `Read`, `LS`, `Grep`, `Glob`     | 安全分析和文件探索  |
+| `edit`      | `Create`, `Edit`, `ApplyPatch` | 代码生成和修改    |
+| `execute`   | `Execute`                  | Shell 命令执行 |
+| `web`       | `WebSearch`, `FetchUrl`      | 网络研究和内容    |
+| `mcp`       | 动态填充                     | MCP 工具     |
+
+### 7.4 使用 Custom Droids
+
+#### 通过自然语言调用
 
 ```
-请使用 code-simplifier droid 来简化这段代码
+请使用 code-reviewer subagent 审查这个 diff
 ```
+
+```
+运行 security-sweeper droid 检查最近编辑的文件
+```
+
+#### 通过 Task 工具调用
+
+Droid 可以自主调用自定义 Droids，或者你可以直接请求。
+
+### 7.5 从 Claude Code 导入代理
+
+如果你已经在 Claude Code 中创建了代理，可以直接导入：
+
+1. 运行 `/droids` 打开 Droids 菜单
+2. 按 **I** 启动导入流程
+3. CLI 扫描 Claude Code 代理目录：
+   - 项目范围：`<项目>/.claude/agents/`
+   - 个人范围：`~/.claude/agents/`
+4. 使用 **Space** 切换选择，**A** 全选
+5. 按 **Enter** 导入
+
+导入时会自动进行模型映射：
+- `sonnet` → 第一个可用的 Sonnet 模型
+- `haiku` → 第一个可用的 Haiku 模型
+- `opus` → 第一个可用的 Opus 模型
+
+### 7.6 示例 Droids
+
+#### 安全扫描器
+
+```markdown
+---
+name: security-sweeper
+description: 在最近编辑的文件中查找不安全模式
+model: inherit
+tools: ["Read", "Grep", "WebSearch"]
+---
+
+调查提示中引用的文件的安全问题：
+
+- 识别注入、不安全传输、权限提升或密钥暴露
+- 建议具体的缓解措施
+- 在有帮助时链接到相关 CWE 或内部标准
+
+回复格式：
+Summary: <标题>
+Findings:
+- <文件>: <问题>
+Mitigations:
+- <建议>
+```
+
+#### 任务协调器
+
+```markdown
+---
+name: task-coordinator
+description: 协调多步骤任务并实时更新进度
+model: inherit
+tools: ["Read", "Edit", "Execute"]
+---
+
+你是任务协调器。将目标分解为可操作的步骤：
+
+1. 使用 TodoWrite 创建和更新任务列表
+2. 对于每个任务，读取相关文件并根据需要执行命令
+3. 使用 TodoWrite 更新实时报告进度
+
+保持任务列表状态更新（pending、in_progress、completed）。
+```
+
+### 7.7 最佳实践
+
+| 实践      | 说明                                 |
+| ------- | ---------------------------------- |
+| 策略性选择模型 | 简单任务用小模型降低成本，复杂推理用大模型              |
+| 限制工具访问  | 使用显式工具列表防止意外的 shell 命令或危险操作        |
+| 结构化输出   | 组织提示以输出 `Summary:` 和 `Findings:` 等部分   |
+| 版本控制共享  | 将 `.factory/droids/*.md` 提交到仓库，与团队共享 |
+| 利用实时更新  | Task 工具现在流式传输实时进度，显示工具调用和结果        |
 
 ---
 
