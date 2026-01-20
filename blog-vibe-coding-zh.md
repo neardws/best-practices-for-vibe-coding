@@ -1,0 +1,865 @@
+# 我的 Vibe Coding 工作流：从终端到 AI 编程的完整指南
+
+> 本文将带你从零开始搭建一套完整的 Vibe Coding 工作环境，包括终端配置、Shell 美化、AI 编程工具以及进阶技巧。
+
+## 目录
+
+1. [引言](#1-引言)
+2. [终端配置](#2-终端配置)
+3. [Oh-My-Zsh 配置](#3-oh-my-zsh-配置)
+4. [Factory Droid - Vibe Coding 核心工具](#4-factory-droid---vibe-coding-核心工具)
+5. [BYOK - 模型选择指南](#5-byok---模型选择指南)
+6. [Skills 系统](#6-skills-系统)
+7. [Custom Droids](#7-custom-droids)
+8. [MCP (Model Context Protocol)](#8-mcp-model-context-protocol)
+9. [工作流示例](#9-工作流示例)
+10. [总结与资源](#10-总结与资源)
+
+---
+
+## 1. 引言
+
+### 什么是 Vibe Coding？
+
+Vibe Coding 是一种全新的编程方式，通过与 AI 助手进行自然语言对话来完成编程任务。你只需要描述你想要实现的功能，AI 就会帮你编写、调试和优化代码。这种方式让编程变得更加直观和高效。
+
+### 为什么选择这套工具链？
+
+- **现代化终端体验**：Warp 和 Kitty 提供流畅、美观的终端界面
+- **高效的 Shell 环境**：Oh-My-Zsh + Powerlevel10k 带来强大的命令行增强
+- **智能 AI 编程**：Factory Droid 提供专业级的 AI 编程辅助
+- **灵活的模型选择**：BYOK 让你可以使用任何 LLM 模型
+- **可扩展的技能系统**：Skills 和 Custom Droids 让 AI 更懂你的工作流
+
+### 目标读者
+
+本教程面向所有对 AI 编程感兴趣的开发者，无论你是刚入门的新手还是经验丰富的老手。每个步骤都有详细说明，跟着做就能完成配置。
+
+---
+
+## 2. 终端配置
+
+一个好的终端是 Vibe Coding 的基础。这里介绍两款优秀的现代终端。
+
+### 2.1 Warp 终端
+
+Warp 是一款现代化的终端，内置 AI 功能，专为开发者设计。
+
+![Warp 终端界面](<!-- IMAGE: Warp 终端主界面截图 -->)
+
+#### 特点
+
+- 🚀 内置 AI 命令建议
+- 📝 块状命令输出，便于复制和分享
+- 🎨 现代化 UI 设计
+- ⚡ 极速启动和响应
+
+#### 安装步骤
+
+**Linux (Debian/Ubuntu):**
+
+```bash
+# 下载并安装
+wget https://releases.warp.dev/stable/v0.2024.11.12.08.02.stable_01/warp-terminal_0.2024.11.12.08.02.stable.01_amd64.deb
+sudo dpkg -i warp-terminal_0.2024.11.12.08.02.stable.01_amd64.deb
+```
+
+**macOS:**
+
+```bash
+brew install --cask warp
+```
+
+![Warp 安装完成](<!-- IMAGE: Warp 安装成功后的欢迎界面 -->)
+
+### 2.2 Kitty 终端（备选方案）
+
+Kitty 是一款基于 GPU 加速的终端模拟器，高度可定制且性能优异。
+
+![Kitty 终端界面](<!-- IMAGE: Kitty 终端主界面截图 -->)
+
+#### 特点
+
+- 🖥️ GPU 渲染，超快速度
+- ⚙️ 高度可配置
+- 🖼️ 支持图片显示
+- 📑 内置多标签和分屏
+
+#### 安装步骤
+
+**Linux (Debian/Ubuntu):**
+
+```bash
+sudo apt install kitty
+```
+
+**macOS:**
+
+```bash
+brew install --cask kitty
+```
+
+#### 基础配置
+
+创建或编辑配置文件 `~/.config/kitty/kitty.conf`：
+
+```conf
+# 字体配置
+font_family      FiraCode Nerd Font
+bold_font        auto
+italic_font      auto
+bold_italic_font auto
+font_size        14.0
+
+# 窗口配置
+window_padding_width 10
+hide_window_decorations yes
+background_opacity 0.95
+
+# 颜色主题 - Catppuccin Mocha
+foreground              #CDD6F4
+background              #1E1E2E
+selection_foreground    #1E1E2E
+selection_background    #F5E0DC
+
+# 标签栏
+tab_bar_edge bottom
+tab_bar_style powerline
+tab_powerline_style slanted
+
+# 快捷键
+map ctrl+shift+t new_tab
+map ctrl+shift+q close_tab
+map ctrl+shift+right next_tab
+map ctrl+shift+left previous_tab
+
+# 滚动
+scrollback_lines 10000
+wheel_scroll_multiplier 5.0
+
+# 光标
+cursor_shape beam
+cursor_blink_interval 0.5
+```
+
+![Kitty 配置效果](<!-- IMAGE: Kitty 配置完成后的效果截图 -->)
+
+---
+
+## 3. Oh-My-Zsh 配置
+
+Oh-My-Zsh 是一个开源的 Zsh 配置管理框架，提供大量主题和插件。
+
+### 3.1 安装 Oh-My-Zsh
+
+首先确保已安装 Zsh：
+
+```bash
+# 检查是否安装
+zsh --version
+
+# 如果未安装，在 Ubuntu/Debian 上安装
+sudo apt install zsh
+
+# 设置 Zsh 为默认 Shell
+chsh -s $(which zsh)
+```
+
+安装 Oh-My-Zsh：
+
+```bash
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
+![Oh-My-Zsh 安装](<!-- IMAGE: Oh-My-Zsh 安装过程截图 -->)
+
+### 3.2 Powerlevel10k 主题
+
+Powerlevel10k 是最受欢迎的 Zsh 主题之一，提供丰富的信息展示和极快的渲染速度。
+
+#### 安装 Nerd Font
+
+首先需要安装 Nerd Font 以正确显示图标：
+
+```bash
+# 下载 FiraCode Nerd Font
+mkdir -p ~/.local/share/fonts
+cd ~/.local/share/fonts
+curl -fLo "FiraCode Nerd Font Regular.ttf" \
+  https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Regular/FiraCodeNerdFont-Regular.ttf
+
+# 刷新字体缓存
+fc-cache -fv
+```
+
+#### 安装 Powerlevel10k
+
+```bash
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
+  ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+```
+
+编辑 `~/.zshrc`，设置主题：
+
+```bash
+ZSH_THEME="powerlevel10k/powerlevel10k"
+```
+
+重新打开终端后，会自动启动配置向导：
+
+```bash
+# 手动启动配置向导
+p10k configure
+```
+
+![Powerlevel10k 配置向导](<!-- IMAGE: Powerlevel10k 配置向导截图 -->)
+
+### 3.3 插件配置
+
+以下是我推荐的插件配置，每个插件都能显著提升你的命令行体验。
+
+#### 安装第三方插件
+
+```bash
+# zsh-autosuggestions - 命令自动补全建议
+git clone https://github.com/zsh-users/zsh-autosuggestions \
+  ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+# zsh-syntax-highlighting - 命令语法高亮
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
+  ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
+# zsh-completions - 额外的命令补全
+git clone https://github.com/zsh-users/zsh-completions \
+  ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions
+```
+
+#### 配置插件
+
+编辑 `~/.zshrc`，配置插件列表：
+
+```bash
+plugins=(
+    git                      # Git 命令别名和状态提示
+    sudo                     # 双击 ESC 在命令前添加 sudo
+    history                  # 历史命令搜索增强
+    extract                  # 通用解压命令，支持各种格式
+    z                        # 智能目录跳转
+    zsh-autosuggestions      # 根据历史命令自动建议
+    zsh-syntax-highlighting  # 命令语法高亮
+    zsh-completions          # 额外的命令补全
+)
+```
+
+应用配置：
+
+```bash
+source ~/.zshrc
+```
+
+#### 插件功能说明
+
+| 插件 | 功能 | 使用示例 |
+|------|------|----------|
+| `git` | Git 命令别名 | `gst` = `git status`, `gco` = `git checkout` |
+| `sudo` | 快速添加 sudo | 双击 `ESC` 在当前命令前添加 sudo |
+| `history` | 历史搜索 | `Ctrl+R` 搜索历史命令 |
+| `extract` | 通用解压 | `extract file.tar.gz` 自动识别格式 |
+| `z` | 智能跳转 | `z project` 跳转到包含 "project" 的常用目录 |
+| `zsh-autosuggestions` | 命令建议 | 输入时显示灰色建议，按 `→` 接受 |
+| `zsh-syntax-highlighting` | 语法高亮 | 正确命令绿色，错误命令红色 |
+| `zsh-completions` | 额外补全 | 更多命令的 Tab 补全支持 |
+
+![插件效果展示](<!-- IMAGE: 各插件效果对比截图 -->)
+
+---
+
+## 4. Factory Droid - Vibe Coding 核心工具
+
+Factory Droid 是一款专业的 AI 编程助手，运行在终端中，让你通过自然语言与代码交互。
+
+### 4.1 什么是 Factory Droid
+
+Factory Droid 是 Factory AI 推出的命令行 AI 编程工具，具有以下特点：
+
+- 🤖 强大的代码理解和生成能力
+- 📁 直接读写文件系统
+- 🔧 执行 Shell 命令
+- 🌐 支持多种 LLM 模型
+- 🎯 可扩展的 Skills 系统
+- 🔗 MCP 协议支持
+
+![Factory Droid 界面](<!-- IMAGE: Factory Droid 运行界面截图 -->)
+
+### 4.2 安装与配置
+
+#### 安装
+
+```bash
+# 使用 npm 安装
+npm install -g @anthropic-ai/droid
+
+# 或使用 bun 安装（更快）
+bun install -g @anthropic-ai/droid
+```
+
+#### 初始配置
+
+首次运行会引导你完成配置：
+
+```bash
+droid
+```
+
+配置文件位于 `~/.factory/settings.json`。
+
+### 4.3 Hooks 配置
+
+Hooks 允许你在特定事件发生时自动执行操作，极大增强工作流。
+
+编辑 `~/.factory/settings.json`：
+
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[planning-with-files] Ready. For complex tasks, create task_plan.md, findings.md, and progress.md in your project directory.'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f \"$FACTORY_PROJECT_DIR/task_plan.md\" ]; then head -30 \"$FACTORY_PROJECT_DIR/task_plan.md\"; fi"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[planning-with-files] File updated. If this completes a phase, update task_plan.md status.'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+#### Hooks 类型说明
+
+| Hook 类型 | 触发时机 | 用途 |
+|-----------|----------|------|
+| `SessionStart` | 会话开始时 | 初始化提示、加载上下文 |
+| `PreToolUse` | 使用工具前 | 检查状态、读取计划 |
+| `PostToolUse` | 使用工具后 | 更新状态、格式化文件 |
+| `Stop` | 会话结束时 | 清理、总结 |
+
+---
+
+## 5. BYOK - 模型选择指南
+
+BYOK（Bring Your Own Key）让你可以使用自己的 API Key 来访问各种 LLM 模型。
+
+### 5.1 什么是 BYOK
+
+BYOK 允许你：
+- 使用自己的 API Key 访问模型
+- 选择最适合你需求的模型
+- 控制成本和使用量
+- 使用本地部署的模型
+
+### 5.2 如何选择模型 - SWE-Rebench 排行榜
+
+[SWE-Rebench](https://swe-rebench.com/) 是一个持续更新的软件工程 LLM 基准测试排行榜，帮助你了解各模型在实际编程任务中的表现。
+
+![SWE-Rebench 排行榜](<!-- IMAGE: SWE-Rebench 网站截图 -->)
+
+#### 关键指标解读
+
+| 指标 | 含义 | 重要性 |
+|------|------|--------|
+| **Resolved Rate** | 成功解决问题的比例 | 最重要，反映模型能力 |
+| **Pass@5** | 5 次尝试中至少成功 1 次的比例 | 反映模型稳定性 |
+| **Cost per Problem** | 每个问题的平均成本 | 影响使用成本 |
+| **Tokens per Problem** | 每个问题消耗的 token 数 | 反映效率 |
+
+### 5.3 推荐模型（2026年1月数据）
+
+根据最新的 SWE-Rebench 数据，以下是不同场景的模型推荐：
+
+#### 顶级性能
+
+| 模型 | Resolved Rate | Pass@5 | Cost/Problem | 特点 |
+|------|---------------|--------|--------------|------|
+| **Claude Opus 4.5** | 63.3% | 79.2% | $1.22 | 最高性能，复杂任务首选 |
+| **GPT-5.2 xhigh** | 61.5% | 70.8% | $1.46 | OpenAI 最强，推理能力强 |
+| **Gemini 3 Flash Preview** | 60.0% | 72.9% | $0.29 | 性价比极高 |
+
+#### 性价比之选
+
+| 模型 | Resolved Rate | Pass@5 | Cost/Problem | 特点 |
+|------|---------------|--------|--------------|------|
+| **Gemini 3 Flash Preview** | 60.0% | 72.9% | $0.29 | 🏆 性价比之王 |
+| **GPT-5.2 medium** | 59.4% | 70.8% | $0.86 | 平衡性能与成本 |
+| **Claude Sonnet 4.5** | 57.5% | 75.0% | $0.98 | 日常任务首选 |
+
+#### 开源模型
+
+| 模型 | Resolved Rate | Pass@5 | Cost/Problem | 特点 |
+|------|---------------|--------|--------------|------|
+| **GLM-4.7** | 51.3% | 66.7% | $0.40 | 🏆 开源最强 |
+| **DeepSeek-V3.2** | 48.5% | 68.8% | $0.25 | 可本地部署 |
+| **Kimi K2 Thinking** | 40.5% | 60.4% | $0.48 | 国产优秀选择 |
+
+#### 预算友好
+
+| 模型 | Resolved Rate | Pass@5 | Cost/Problem | 特点 |
+|------|---------------|--------|--------------|------|
+| **Grok Code Fast 1** | 35.9% | 54.2% | $0.08 | 最便宜 |
+| **Devstral-2-123B** | 36.6% | 59.6% | $0.09 | 开源可自托管 |
+| **MiniMax M2.1** | 37.3% | 58.3% | $0.10 | 缓存友好 |
+
+### 5.4 自定义模型配置
+
+在 `~/.factory/settings.json` 中配置自定义模型：
+
+```json
+{
+  "customModels": [
+    {
+      "model": "gpt-5.2",
+      "id": "custom:my-gpt-5.2",
+      "displayName": "My GPT-5.2",
+      "baseUrl": "https://api.openai.com/v1",
+      "apiKey": "sk-your-api-key-here",
+      "provider": "openai"
+    },
+    {
+      "model": "claude-opus-4-5",
+      "id": "custom:my-opus",
+      "displayName": "My Claude Opus",
+      "baseUrl": "https://api.anthropic.com/v1",
+      "apiKey": "sk-ant-your-key-here",
+      "provider": "anthropic"
+    },
+    {
+      "model": "deepseek-v3.2",
+      "id": "custom:local-deepseek",
+      "displayName": "Local DeepSeek",
+      "baseUrl": "http://localhost:8080/v1",
+      "apiKey": "not-needed",
+      "provider": "openai"
+    }
+  ],
+  "sessionDefaultSettings": {
+    "model": "custom:my-gpt-5.2"
+  }
+}
+```
+
+#### 使用本地代理
+
+如果你使用代理服务（如 LiteLLM、OneAPI 等），配置如下：
+
+```json
+{
+  "customModels": [
+    {
+      "model": "claude-opus-4-5",
+      "id": "custom:proxy-opus",
+      "displayName": "[Proxy] Claude Opus 4.5",
+      "baseUrl": "http://your-proxy-server:8000/v1",
+      "apiKey": "your-proxy-key",
+      "provider": "openai",
+      "noImageSupport": false
+    }
+  ]
+}
+```
+
+---
+
+## 6. Skills 系统
+
+Skills 是 Factory Droid 的扩展系统，为 AI 提供特定领域的专业知识和工作流。
+
+### 6.1 什么是 Skills
+
+Skills 是预定义的指令集和工作流，让 AI 在特定场景下表现更好：
+
+- 📋 提供特定领域的最佳实践
+- 🔄 定义标准化的工作流程
+- 📝 包含模板和检查清单
+- 🎯 确保输出质量和一致性
+
+### 6.2 推荐 Skills
+
+#### planning-with-files - 复杂任务规划
+
+适用于需要多步骤完成的复杂任务，采用 Manus 风格的文件化规划。
+
+**核心理念：**
+```
+上下文窗口 = 内存（易失、有限）
+文件系统 = 磁盘（持久、无限）
+→ 重要的东西都写到文件里
+```
+
+**使用方法：**
+```bash
+# 在项目目录创建三个规划文件
+task_plan.md   # 任务计划和进度
+findings.md    # 研究发现
+progress.md    # 会话日志
+```
+
+**task_plan.md 示例：**
+```markdown
+# 任务计划：实现用户认证功能
+
+## 目标
+实现完整的用户认证系统，包括注册、登录、注销功能。
+
+## 阶段
+- [x] Phase 1: 数据库模型设计
+- [ ] Phase 2: API 端点实现
+- [ ] Phase 3: 前端表单
+- [ ] Phase 4: 测试
+
+## 当前状态
+正在进行 Phase 2
+
+## 遇到的问题
+| 问题 | 尝试 | 解决方案 |
+|------|------|----------|
+| JWT 过期处理 | 1 | 添加 refresh token |
+```
+
+#### brainstorming - 创意头脑风暴
+
+在开始任何创造性工作之前使用，帮助明确需求和设计。
+
+**工作流程：**
+1. 了解当前项目上下文
+2. 一次问一个问题来细化想法
+3. 提出 2-3 个不同方案及其权衡
+4. 分段展示设计，每段确认后继续
+
+#### test-driven-development - TDD 开发
+
+强制执行测试驱动开发流程。
+
+**核心原则：**
+```
+没有失败的测试，就没有生产代码
+```
+
+**Red-Green-Refactor 循环：**
+1. **RED** - 编写一个失败的测试
+2. **验证 RED** - 确认测试失败且原因正确
+3. **GREEN** - 编写最少代码使测试通过
+4. **验证 GREEN** - 确认测试通过
+5. **REFACTOR** - 重构代码，保持测试通过
+
+#### verification-before-completion - 完成前验证
+
+防止在没有验证的情况下声称工作完成。
+
+**核心原则：**
+```
+没有验证证据，不做完成声明
+```
+
+**验证检查清单：**
+- [ ] 运行测试命令，确认 0 失败
+- [ ] 运行 lint 命令，确认 0 错误
+- [ ] 运行 build 命令，确认成功
+- [ ] 逐条检查需求是否满足
+
+#### code-simplifier - 代码简化
+
+在编写或修改代码后自动应用，简化和优化代码。
+
+**优化方向：**
+- 减少不必要的复杂度和嵌套
+- 消除冗余代码
+- 改进命名
+- 遵循项目编码规范
+
+### 6.3 Skills 安装与配置
+
+Skills 存放在 `~/.factory/skills/` 目录下：
+
+```bash
+# 查看已安装的 skills
+ls ~/.factory/skills/
+
+# 每个 skill 是一个目录，包含 SKILL.md 定义文件
+~/.factory/skills/
+├── brainstorming/
+│   └── SKILL.md
+├── planning-with-files/
+│   ├── SKILL.md
+│   ├── scripts/
+│   └── templates/
+├── test-driven-development/
+│   └── SKILL.md
+└── verification-before-completion/
+    └── SKILL.md
+```
+
+#### 创建自定义 Skill
+
+创建 `~/.factory/skills/my-skill/SKILL.md`：
+
+```markdown
+---
+name: my-skill
+description: 这是我的自定义 skill 描述
+---
+
+# My Skill
+
+## Overview
+描述这个 skill 的用途...
+
+## When to Use
+什么时候使用这个 skill...
+
+## Process
+具体的工作流程...
+```
+
+---
+
+## 7. Custom Droids
+
+Custom Droids 是专门化的 AI 代理，针对特定任务进行优化。
+
+### 7.1 什么是 Custom Droids
+
+Custom Droids 与 Skills 的区别：
+- **Skills**：提供给主 AI 的知识和指导
+- **Custom Droids**：独立的专门化 AI 代理
+
+Custom Droids 可以：
+- 自主处理特定类型的任务
+- 拥有专门的系统提示
+- 使用不同的模型配置
+
+### 7.2 创建自定义 Droid
+
+Droids 存放在 `~/.factory/droids/` 目录：
+
+#### 示例：code-simplifier Droid
+
+创建 `~/.factory/droids/code-simplifier.md`：
+
+```markdown
+---
+name: code-simplifier
+description: "Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality. Use after writing or modifying code."
+---
+
+# Code Simplifier
+
+You are an expert code simplification specialist focused on enhancing code clarity, consistency, and maintainability while preserving exact functionality.
+
+## 1. Preserve Functionality
+Never change what the code does - only how it does it.
+
+## 2. Apply Project Standards
+Follow the established coding standards from project configuration.
+
+## 3. Enhance Clarity
+Simplify code structure by:
+- Reducing unnecessary complexity and nesting
+- Eliminating redundant code
+- Improving readability through clear naming
+- Avoiding nested ternary operators
+
+## 4. Maintain Balance
+Avoid over-simplification that could:
+- Reduce code clarity
+- Create overly clever solutions
+- Make the code harder to debug
+
+## Usage
+Operate autonomously after code is written or modified.
+```
+
+#### 使用 Custom Droid
+
+在 Factory Droid 中，可以通过 Task 工具调用自定义 Droid：
+
+```
+请使用 code-simplifier droid 来简化这段代码
+```
+
+---
+
+## 8. MCP (Model Context Protocol)
+
+MCP 是一个标准协议，允许 AI 助手与外部工具和数据源交互。
+
+### 8.1 MCP 概念介绍
+
+MCP 允许你：
+- 连接数据库查询数据
+- 访问 API 服务
+- 操作外部工具
+- 扩展 AI 的能力
+
+### 8.2 MCP 配置
+
+配置文件位于 `~/.factory/mcp.json`：
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/allowed/directory"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-token-here"
+      }
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "DATABASE_URL": "postgresql://user:password@localhost:5432/mydb"
+      }
+    }
+  }
+}
+```
+
+#### 常用 MCP Servers
+
+| Server | 用途 | 安装 |
+|--------|------|------|
+| `server-filesystem` | 文件系统访问 | `@modelcontextprotocol/server-filesystem` |
+| `server-github` | GitHub 操作 | `@modelcontextprotocol/server-github` |
+| `server-postgres` | PostgreSQL 数据库 | `@modelcontextprotocol/server-postgres` |
+| `server-sqlite` | SQLite 数据库 | `@modelcontextprotocol/server-sqlite` |
+| `server-fetch` | HTTP 请求 | `@modelcontextprotocol/server-fetch` |
+
+---
+
+## 9. 工作流示例
+
+让我们通过一个完整的例子来展示 Vibe Coding 工作流。
+
+### 场景：创建一个 REST API 端点
+
+#### 步骤 1：打开终端
+
+```bash
+# 在 Warp 或 Kitty 中打开项目目录
+cd ~/projects/my-api
+```
+
+#### 步骤 2：启动 Factory Droid
+
+```bash
+droid
+```
+
+![启动 Droid](<!-- IMAGE: Droid 启动界面截图 -->)
+
+#### 步骤 3：描述任务
+
+```
+我需要创建一个用户注册的 REST API 端点：
+- POST /api/users/register
+- 接收 email 和 password
+- 验证输入
+- 密码加密存储
+- 返回 JWT token
+
+请使用 TDD 方式开发。
+```
+
+#### 步骤 4：AI 执行
+
+Droid 会：
+1. 创建 `task_plan.md` 规划任务
+2. 先编写测试代码
+3. 运行测试确认失败（RED）
+4. 编写实现代码
+5. 运行测试确认通过（GREEN）
+6. 重构代码（REFACTOR）
+7. 运行验证确认完成
+
+#### 步骤 5：审查结果
+
+```bash
+# 查看生成的文件
+git status
+
+# 运行测试
+npm test
+
+# 查看覆盖率
+npm run test:coverage
+```
+
+![工作流完成](<!-- IMAGE: 完整工作流执行结果截图 -->)
+
+---
+
+## 10. 总结与资源
+
+### 总结
+
+通过本教程，你已经学会了：
+
+1. ✅ 配置现代化终端（Warp/Kitty）
+2. ✅ 美化 Shell 环境（Oh-My-Zsh + Powerlevel10k）
+3. ✅ 安装和配置 Factory Droid
+4. ✅ 选择合适的 LLM 模型（BYOK）
+5. ✅ 使用 Skills 增强 AI 能力
+6. ✅ 创建 Custom Droids
+7. ✅ 配置 MCP 扩展功能
+
+### 相关资源
+
+- **Warp 终端**: https://www.warp.dev/
+- **Kitty 终端**: https://sw.kovidgoyal.net/kitty/
+- **Oh-My-Zsh**: https://ohmyz.sh/
+- **Powerlevel10k**: https://github.com/romkatv/powerlevel10k
+- **Factory Droid**: https://docs.factory.ai/
+- **SWE-Rebench**: https://swe-rebench.com/
+- **MCP 协议**: https://modelcontextprotocol.io/
+
+### 下一步
+
+- 探索更多 Skills 和 Custom Droids
+- 根据 SWE-Rebench 数据尝试不同模型
+- 为你的特定工作流创建自定义配置
+- 加入社区分享你的经验
+
+---
+
+> 🎉 恭喜你完成了 Vibe Coding 环境的配置！开始享受 AI 辅助编程的乐趣吧！
+
+*最后更新：2026年1月*
