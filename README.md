@@ -13,10 +13,10 @@ A comprehensive guide to setting up and mastering the Vibe Coding workflow - fro
 
 ## Contents
 
-| Language | File | Description |
-|----------|------|-------------|
-| English | [blog-vibe-coding-en.md](./blog-vibe-coding-en.md) | Full guide in English |
-| 中文 | [blog-vibe-coding-zh.md](./blog-vibe-coding-zh.md) | 完整中文指南 |
+| Language | File                                              | Description           |
+| -------- | ------------------------------------------------- | --------------------- |
+| English  | [blog-vibe-coding-en.md](./blog-vibe-coding-en.md) | Full guide in English |
+| 中文       | [blog-vibe-coding-zh.md](./blog-vibe-coding-zh.md) | 完整中文指南                |
 
 ## Topics Covered
 
@@ -37,9 +37,9 @@ Choose your preferred setup method:
 
 | Method | Description |
 |--------|-------------|
-| 🤖 AI Agent Setup | Download the LLM Configuration Guide and let AI complete the setup |
-| ⚡ One-click Script | `curl -fsSL https://neardws.com/scripts/vibe-setup.sh \| bash` |
-| 📖 Manual Setup | Follow the guides step by step |
+| 🤖 AI Agent Setup | Download the [LLM Configuration Guide](/scripts/vibe-coding-llm-guide.md), paste it to Warp AI or Factory Droid, and let AI complete the setup automatically |
+| ⚡ One-click Script | Run `curl -fsSL https://neardws.com/scripts/vibe-setup.sh \| bash` in your terminal |
+| 📖 Manual Setup | Follow the complete guides step by step ([English](./blog-vibe-coding-en.md) / [中文](./blog-vibe-coding-zh.md)) |
 
 ## Resources
 
